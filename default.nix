@@ -1,21 +1,6 @@
-{ pkgs ? (
-    let
-      inherit (builtins) fetchTree fromJSON readFile;
-      inherit ((fromJSON (readFile ./flake.lock)).nodes) nixpkgs gomod2nix;
-    in
-    import (fetchTree nixpkgs.locked) {
-      overlays = [
-        (import "${fetchTree gomod2nix.locked}/overlay.nix")
-      ];
-    }
-  )
-, buildGoApplication ? pkgs.buildGoApplication
-}:
-
-buildGoApplication {
-  pname = "compare_versions";
-  version = "0.1";
-  pwd = ./.;
-  src = ./.;
-  modules = ./gomod2nix.toml;
-}
+(import (let lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+in fetchTarball {
+  url =
+    lock.nodes.flake-compat.locked.url or "https://github.com/edolstra/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+  sha256 = lock.nodes.flake-compat.locked.narHash;
+}) { src = ./.; }).defaultNix
