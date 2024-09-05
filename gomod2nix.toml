@@ -1,0 +1,33 @@
+schema = 3
+
+[mod]
+  [mod."github.com/aquasecurity/go-pep440-version"]
+    version = "v0.0.0-20210121094942-22b2f8951d46"
+    hash = "sha256-aNhZuxYFQW4pCeFSwQA6p5fGC0wofkRyYEEeOOMmyg0="
+  [mod."github.com/aquasecurity/go-version"]
+    version = "v0.0.0-20210121072130-637058cfe492"
+    hash = "sha256-W6opmS2Yf6J4D5MW/XE6OyY4EHjV3wPKEC4HcM/728M="
+  [mod."github.com/hashicorp/errwrap"]
+    version = "v1.0.0"
+    hash = "sha256-LGSLrefkABG1kH1i+GUWiD2/ggJxiZEJ+D2YNbhZjmo="
+  [mod."github.com/hashicorp/go-multierror"]
+    version = "v1.1.1"
+    hash = "sha256-ANzPEUJIZIlToxR89Mn7Db73d9LGI51ssy7eNnUgmlA="
+  [mod."github.com/hashicorp/go-version"]
+    version = "v1.7.0"
+    hash = "sha256-Umc/Q2mxRrPF4aEcDuDJq4lFBT+PSsnyANfyFwUIaxI="
+  [mod."github.com/knqyf263/go-apk-version"]
+    version = "v0.0.0-20200609155635-041fdbb8563f"
+    hash = "sha256-2tnD8YHxLRTmwoEfG3dN154RJdOAA7MlsH571Fy00L0="
+  [mod."github.com/knqyf263/go-deb-version"]
+    version = "v0.0.0-20230223133812-3ed183d23422"
+    hash = "sha256-MA4TF6MIIo4elkgJXoXtZWKVd3U/m452SjYwcGKt+5Q="
+  [mod."github.com/masahiro331/go-mvn-version"]
+    version = "v0.0.0-20210429150710-d3157d602a08"
+    hash = "sha256-7gGd4A7+sejrePMfSjCIC3l5uKaDYGryhirQcVSsHZU="
+  [mod."github.com/mcuadros/go-version"]
+    version = "v0.0.0-20190830083331-035f6764e8d2"
+    hash = "sha256-9nHT78SrnLoJpfRPggleqjPrV9GZaI2Ro4gA+NvZyLY="
+  [mod."golang.org/x/xerrors"]
+    version = "v0.0.0-20200804184101-5ec99f83aff1"
+    hash = "sha256-62f++IO8Ia32CYy+xX8XDxCcT9r1sbPvVwoKV99gf7U="
