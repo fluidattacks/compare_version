@@ -23,35 +23,29 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.20'  # Usa la versión de Go que necesitas
+          go-version: '1.20'
 
       - name: Build binary
         env:
-          GOOS=${{ matrix.goos }}
-          GOARCH=${{ matrix.goarch }}
+          GOOS: "${{ matrix.goos }}"
+          GOARCH: "${{ matrix.goarch }}"
         run: |
           mkdir -p dist
           go build -o dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }} .
 
+      - name: List files in dist directory
+        run: ls -la dist
+
       - name: Archive binary
-        run: tar -czvf "dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" -C dist compare_versions
+        run: tar -czvf "dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" -C dist "compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}"
 
-      - name: Upload Release Asset
-        uses: actions/upload-artifact@v3
-        with:
-          name: compare_versions-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz
+      - name: List files after archiving
+        run: ls -la dist
 
-  release:
-    name: Create GitHub Release
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create Release
-        uses: actions/create-release@v1
+      - name: Upload the Rodeo binaries
+        uses: svenstaro/upload-release-action@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-          files: dist/*.tar.gz
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          file: ./dist/*.tar.gz
+          file_glob: true
