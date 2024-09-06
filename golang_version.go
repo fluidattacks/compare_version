@@ -24,11 +24,6 @@ func (g golangVersion) compare(o golangVersion) int {
 	return g.semVer.Compare(o.semVer)
 }
 
-// newGolangVersion creates a new golangVersion struct from the given version string.
-// If the version string is "(devel)", it returns nil, nil.
-// Otherwise, it parses the version string using hashiVersion.NewSemver and returns
-// a golangVersion struct with the raw version string and the parsed semantic version.
-// If there is an error parsing the version string, it returns nil and the error.
 func newGolangVersion(v string) (*golangVersion, error) {
 	if v == "(devel)" {
 		return nil, nil
