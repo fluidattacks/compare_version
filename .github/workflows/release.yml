@@ -12,9 +12,12 @@ jobs:
 
     strategy:
       matrix:
-        goos: [linux]
-        goarch: [amd64]
+        goos: [linux, darwin, ]
+        goarch: [amd64, arm]
         goarm: [""]
+        exclude:
+            - goos: darwin
+              goarch: arm
 
     steps:
       - name: Check out code
@@ -33,19 +36,10 @@ jobs:
           mkdir -p dist
           go build -o dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }} .
 
-      - name: List files in dist directory
-        run: ls -la dist
-
-      - name: Archive binary
-        run: tar -czvf "dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" -C dist "compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}"
-
-      - name: List files after archiving
-        run: ls -la dist
-
       - name: Upload the Rodeo binaries
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
-          file: ./dist/*.tar.gz
+          file: ./dist/*
           file_glob: true
