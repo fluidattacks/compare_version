@@ -34,9 +34,9 @@ jobs:
           GOARCH: "${{ matrix.goarch }}"
         run: |
           mkdir -p dist
-          go build -o dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }} .
+          go build -o dist/compare_versions_${{ matrix.goarch }}-${{ matrix.goos }} .
       - name: Archive binary
-        run: tar -czvf "dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" -C dist "compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}"
+        run: tar -czvf "dist/compare_versions_${{ matrix.goarch }}-${{ matrix.goos }}.tar.gz" -C dist "compare_versions_${{ matrix.goarch }}-${{ matrix.goos }}"
 
       - name: Upload the Rodeo binaries
         uses: svenstaro/upload-release-action@v2
