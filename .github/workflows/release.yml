@@ -23,18 +23,18 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.20'  # Usa la versión de Go que necesitas
+          go-version: '1.20'
 
       - name: Build binary
         env:
-          GOOS=${{ matrix.goos }}
-          GOARCH=${{ matrix.goarch }}
+          GOOS: "${{ matrix.goos }}"
+          GOARCH: "${{ matrix.goarch }}"
         run: |
           mkdir -p dist
           go build -o dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }} .
 
       - name: Archive binary
-        run: tar -czvf "dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" -C dist compare_versions
+        run: tar -czvf "dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" -C dist "compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}"
 
       - name: Upload Release Asset
         uses: actions/upload-artifact@v3
@@ -46,12 +46,26 @@ jobs:
     name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
+
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
       - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-          files: dist/*.tar.gz
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # Referencia la URL de subida desde el paso anterior
+          asset_path: dist/compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz
+          asset_name: compare_versions_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz
+          asset_content_type: application/gzip
