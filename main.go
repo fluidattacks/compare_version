@@ -3,8 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	python_version "github.com/aquasecurity/go-pep440-version"
+	semver "github.com/hashicorp/go-version"
 	apk_version "github.com/knqyf263/go-apk-version"
 	debian_version "github.com/knqyf263/go-deb-version"
 	maven_version "github.com/masahiro331/go-mvn-version"
@@ -13,7 +15,7 @@ import (
 
 type restrictedLanguage string
 
-var allowedLanguages = []string{"rpm", "java", "golang", "ruby", "gem", "php", "composer", "apk", "deb", "debian", "python"}
+var allowedLanguages = []string{"rpm", "java", "golang", "ruby", "gem", "php", "composer", "apk", "deb", "debian", "python", "semver", "maven"}
 
 func (r *restrictedLanguage) Set(value string) error {
 	for _, v := range allowedLanguages {
@@ -42,7 +44,7 @@ func main() {
 	switch language {
 	case "rpm":
 		result, err = compareRpmVersions(*version1, *version2)
-	case "java":
+	case "java", "maven":
 		result, err = compareJavaVersions(*version1, *version2)
 	case "golang":
 		result, err = compareGolangVersions(*version1, *version2)
@@ -56,14 +58,16 @@ func main() {
 		result, err = compareDebianVersions(*version1, *version2)
 	case "python":
 		result, err = comparePythonVersions(*version1, *version2)
+	case "semver":
+		result, err = compareSemanticVersions(*version1, *version2)
 	default:
 		fmt.Printf("Unsupported language: %s\n", language)
 		return
 	}
 
 	if err != nil {
-		fmt.Printf("Error comparing versions: %v\n", err)
-		return
+		fmt.Fprintf(os.Stderr, "Error comparing versions: %v\n", err)
+		os.Exit(1)
 	}
 
 	fmt.Printf("%d\n", result)
@@ -126,13 +130,13 @@ func comparePhpVersion(v1, v2 string) (int, error) {
 func compareApkVersions(v1, v2 string) (int, error) {
 	ver1, err := apk_version.NewVersion(v1)
 	if err != nil {
-		return 0, fmt.Errorf("invalid PHP composer version %s: %v", v1, err)
+		return 0, fmt.Errorf("invalid Alpine version %s: %v", v1, err)
 	}
 
 	ver2, err := apk_version.NewVersion(v2)
 
 	if err != nil {
-		return 0, fmt.Errorf("invalid PHP composer version %s: %v", v2, err)
+		return 0, fmt.Errorf("invalid Alpine version %s: %v", v2, err)
 	}
 
 	return ver1.Compare(ver2), nil
@@ -141,13 +145,13 @@ func compareApkVersions(v1, v2 string) (int, error) {
 func compareDebianVersions(v1, v2 string) (int, error) {
 	ver1, err := debian_version.NewVersion(v1)
 	if err != nil {
-		return 0, fmt.Errorf("invalid PHP composer version %s: %v", v1, err)
+		return 0, fmt.Errorf("invalid Debian version %s: %v", v1, err)
 	}
 
 	ver2, err := debian_version.NewVersion(v2)
 
 	if err != nil {
-		return 0, fmt.Errorf("invalid PHP composer version %s: %v", v1, err)
+		return 0, fmt.Errorf("invalid Debian version %s: %v", v1, err)
 	}
 
 	return ver1.Compare(ver2), nil
@@ -156,13 +160,27 @@ func compareDebianVersions(v1, v2 string) (int, error) {
 func comparePythonVersions(v1, v2 string) (int, error) {
 	ver1, err := python_version.Parse(v1)
 	if err != nil {
-		return 0, fmt.Errorf("invalid PHP composer version %s: %v", v1, err)
+		return 0, fmt.Errorf("invalid Python version %s: %v", v1, err)
 	}
 
 	ver2, err := python_version.Parse(v2)
 
 	if err != nil {
-		return 0, fmt.Errorf("invalid PHP composer version %s: %v", v1, err)
+		return 0, fmt.Errorf("invalid Python composer version %s: %v", v1, err)
+	}
+
+	return ver1.Compare(ver2), nil
+}
+func compareSemanticVersions(v1, v2 string) (int, error) {
+	ver1, err := semver.NewVersion(v1)
+	if err != nil {
+		return 0, fmt.Errorf("invalid Semantic version %s: %v", v1, err)
+	}
+
+	ver2, err := semver.NewVersion(v2)
+
+	if err != nil {
+		return 0, fmt.Errorf("invalid Semantic version %s: %v", v1, err)
 	}
 
 	return ver1.Compare(ver2), nil
